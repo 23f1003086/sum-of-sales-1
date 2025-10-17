@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Summary sample1</title>
+    <title>Sales Summary</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -22,40 +22,65 @@
         <div id="total-sales" class="alert alert-info" role="alert"></div>
         <input type="file" id="file-input" class="form-control" accept=".csv" />
         <button id="upload-button" class="btn btn-primary mt-2">Upload CSV</button>
+        <div class="mt-4">
+            <table id="product-sales" class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Total Sales</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.title = 'Sales Summary sample1';
+        document.title = 'Sales Summary';
 
         function processCSV(data) {
             const rows = data.split('\n');
+            const salesData = {};
             let totalSales = 0;
 
             rows.forEach((row, index) => {
                 if (index === 0) return; // Skip header
                 const columns = row.split(',');
                 if (columns.length > 1) {
+                    const product = columns[0].trim();
                     const sales = parseFloat(columns[1]);
                     if (!isNaN(sales)) {
                         totalSales += sales;
+                        salesData[product] = (salesData[product] || 0) + sales;
                     }
                 }
             });
 
-            return totalSales;
+            return { totalSales, salesData };
         }
 
         function displayTotalSales(total) {
             document.querySelector("#total-sales").textContent = `Total Sales: $${total.toFixed(2)}`;
         }
 
+        function displayProductSales(salesData) {
+            const tbody = document.querySelector('#product-sales tbody');
+            tbody.innerHTML = ''; // Clear existing rows
+            for (const [product, sales] of Object.entries(salesData)) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${product}</td><td>$${sales.toFixed(2)}</td>`;
+                tbody.appendChild(row);
+            }
+        }
+
         function handleFile(file) {
             const reader = new FileReader();
             reader.onload = function(event) {
                 const data = event.target.result;
-                const totalSales = processCSV(data);
+                const { totalSales, salesData } = processCSV(data);
                 displayTotalSales(totalSales);
+                displayProductSales(salesData);
                 document.querySelector("#loading").style.display = 'none';
             };
             reader.onerror = function() {
@@ -67,7 +92,7 @@
 
         function fetchDefaultCSV() {
             document.querySelector("#loading").style.display = 'block';
-            fetch('data.csv')
+            fetch('rates.json')
                 .then(response => {
                     if (!response.ok) throw new Error('Network response was not ok');
                     return response.text();
