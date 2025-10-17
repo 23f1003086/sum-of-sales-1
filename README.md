@@ -2,7 +2,7 @@
 
 ## Project Description
 This project was automatically generated based on the following requirement:
-Publish a single-page site that fetches data.csv from attachments, sums its sales column, sets the title to "Sales Summary sample1", displays the total inside #total-sales, and loads Bootstrap 5 from jsdelivr.
+Add a Bootstrap table #product-sales that lists each product with its total sales and keeps #total-sales accurate after render.
 
 ## Features
 - Implements the specified functionality
