@@ -2,7 +2,7 @@
 
 ## Project Description
 This project was automatically generated based on the following requirement:
-Add a Bootstrap table #product-sales that lists each product with its total sales and keeps #total-sales accurate after render.
+Add a Bootstrap table #product-sales that lists each product with its total sales, keeps #total-sales accurate, supports currency conversion and region filtering.
 
 ## Features
 - Implements the specified functionality
